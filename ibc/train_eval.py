@@ -57,7 +57,7 @@ flags.DEFINE_bool('video', False,
                   'If true, write out one rollout video after eval.')
 flags.DEFINE_multi_enum(
     'task', None,
-    (tasks.IBC_TASKS + tasks.D4RL_TASKS),
+    (tasks.IBC_TASKS + tasks.D4RL_TASKS + tasks.CUSTOM_TASKS),
     'If True the reach task is evaluated.')
 flags.DEFINE_boolean('viz_img', default=False,
                      help='Whether to save out imgs of what happened.')

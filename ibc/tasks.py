@@ -38,3 +38,4 @@ D4RL_TASKS = ['antmaze-large-diverse-v0',
               'walker2d-medium-expert-v0',
               'walker2d-medium-replay-v0',
               'walker2d-medium-v0'] + ADROIT_TASKS
+CUSTOM_TASKS = ['Stack-v0']

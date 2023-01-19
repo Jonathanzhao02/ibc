@@ -55,6 +55,8 @@ def get_env_name(task, shared_memory_eval, use_image_obs=False):
   elif task in tasks.D4RL_TASKS:
     env_name = task
     assert not use_image_obs  # Not supported.
+  elif task in tasks.CUSTOM_TASKS:
+    env_name = task
   else:
     raise ValueError('unknown task %s' % task)
   return env_name
