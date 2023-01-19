@@ -27,6 +27,8 @@ import gin
 from ibc.environments.block_pushing import block_pushing  # pylint: disable=unused-import
 from ibc.environments.block_pushing import block_pushing_discontinuous  # pylint: disable=unused-import
 from ibc.environments.particle import particle  # pylint: disable=unused-import
+from ibc.environments.stack import stack  # pylint: disable=unused-import
+from ibc.environments.stack import stack_trajectory  # pylint: disable=unused-import
 from ibc.ibc import tasks
 from ibc.ibc.agents import ibc_policy  # pylint: disable=unused-import
 from ibc.ibc.eval import eval_env as eval_env_module

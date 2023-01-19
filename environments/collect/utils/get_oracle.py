@@ -24,6 +24,10 @@ def get_oracle(env, task):
     oracle_policy = reach_oracle_module.ReachOracle(env)
   elif task == 'PUSH':
     oracle_policy = oriented_push_oracle_module.OrientedPushOracle(env)
+  elif task == 'Stack-v0':
+    raise NotImplementedError
+  elif task == 'StackTrajectory-v0':
+    raise NotImplementedError
   else:
     raise ValueError('oracle not registered.')
   return oracle_policy

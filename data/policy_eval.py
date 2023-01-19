@@ -30,6 +30,9 @@ from ibc.environments.block_pushing import block_pushing_multimodal
 from ibc.environments.collect.utils import get_oracle as get_oracle_module
 from ibc.environments.particle import particle  # pylint: disable=unused-import
 from ibc.environments.particle import particle_oracles
+from ibc.environments.stack import stack  # pylint: disable=unused-import
+from ibc.environments.stack import stack_trajectory  # pylint: disable=unused-import
+from ibc.ibc import tasks
 from tf_agents.drivers import py_driver
 from tf_agents.environments import suite_gym
 from tf_agents.environments import wrappers
@@ -57,7 +60,7 @@ flags.DEFINE_string('output_path', '/tmp/ibc/policy_eval/',
 flags.DEFINE_enum(
     'task', None,
     ['REACH', 'PUSH', 'INSERT', 'REACH_NORMALIZED', 'PUSH_NORMALIZED',
-     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL'],
+     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL'] + tasks.CUSTOM_TASKS,
     'Which task of the enum to evaluate.')
 flags.DEFINE_bool('use_image_obs', False,
                   'Whether to include image observations.')
@@ -109,6 +112,9 @@ def evaluate(num_episodes,
     # Options are supported through gin, registered env is the same.
     env_name = 'Particle-v0'
     assert not (shared_memory or use_image_obs)  # Not supported.
+  elif task in tasks.CUSTOM_TASKS:
+    env_name = task
+    assert use_image_obs
   else:
     raise ValueError("I don't recognize this task to eval.")
 
