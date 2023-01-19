@@ -21,7 +21,6 @@ class StackTrajectoryEnv(StackEnv):
   
   def reset_model(self):
     ob = super().reset_model()
-    ob['dist_to_goal'] = np.array(0, dtype=np.float64)
 
     # Controller creation
     self.damping = Damping(self.robot_config, kv=10)
@@ -47,7 +46,6 @@ class StackTrajectoryEnv(StackEnv):
     )
     u[-1] = a[-1]
     ob, reward, terminated, _ = StackEnv.step(self, u)
-    ob['dist_to_goal'] = np.array(self.dist(a[:3]))
     return ob, reward, terminated, {}
 
 registration.register(id='StackTrajectory-v0', entry_point=StackTrajectoryEnv)
