@@ -37,6 +37,7 @@ combos = [
   ['bowl', 'mug'],
 ]
 
+# Figure out how to filter out invalid physics
 def random_place(model, qpos, objs):
   qpos = qpos.copy()
   random.shuffle(objs)
@@ -100,22 +101,32 @@ class StackEnv(MujocoEnv):
   def __init__(self, collisions=True, max_episode_steps=800, goal_distance=0.08, **kwargs):
     if not collisions:
       self.xml_template_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_template_nocol.xml'
-      self.xml_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_nocol.xml'
-      self.xml_name = 'ur5_tabletop_nocol.xml'
+      self.xml_path = f'ibc/environments/assets/my_models/ur5_robotiq85/generated/{id(self)}.xml'
+      self.xml_name = f'{id(self)}.xml'
     else:
       self.xml_template_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_template.xml'
-      self.xml_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop.xml'
-      self.xml_name = 'ur5_tabletop.xml'
+      self.xml_path = f'ibc/environments/assets/my_models/ur5_robotiq85/generated/{id(self)}.xml'
+      self.xml_name = f'{id(self)}.xml'
 
     if 'observation_space' not in kwargs:
       kwargs['observation_space'] = Dict({
         "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.uint8),
-        "objective": Text(100),
+        "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
       })
+    
+    # Create placeholder generated XML
+    _ = parse_xml(
+      Path(os.getcwd()).joinpath(self.xml_template_path),
+      '__template',
+      Path(os.getcwd()).joinpath(self.xml_path),
+      {
+        'color': ColorTagReplacer(),
+        'scale': ScaleTagReplacer(),
+      }
+    )
 
     self.goal_distance = goal_distance
     self.max_episode_steps = max_episode_steps
-    self.steps = 0
 
     MujocoEnv.__init__(
       self,
@@ -141,10 +152,12 @@ class StackEnv(MujocoEnv):
     self.steps += 1
     ob = self._get_obs()
     reward = self._get_reward()
-    terminated = self.steps > self.max_episode_steps
+    terminated = self.steps >= self.max_episode_steps
     return ob, reward, terminated, {}
 
   def reset_model(self):
+    self.steps = 0
+    
     # Randomize object attributes
     gen_tags = parse_xml(
       Path(os.getcwd()).joinpath(self.xml_template_path),
@@ -195,10 +208,11 @@ class StackEnv(MujocoEnv):
     image = data[::-1, :, :]
     # self._get_viewer('human').render()
     # image = np.zeros((224, 224, 3))
+    obj = np.frombuffer(self.objective.encode('ascii'), dtype='B')
 
     return {
       "image": image,
-      "objective": self.objective,
+      "objective": np.pad(obj, (0, 100 - obj.size)),
     }
   
   def _get_reward(self):

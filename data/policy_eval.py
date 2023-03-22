@@ -75,7 +75,7 @@ flags.DEFINE_string('checkpoint_path', None,
 flags.DEFINE_enum('policy', None, [
     'random', 'oracle_reach', 'oracle_push', 'oracle_reach_normalized',
     'oracle_push_normalized', 'particle_green_then_blue'
-], 'Static policies to evaluate.')
+] + ['oracle_stack', 'oracle_stack_trajectory'], 'Static policies to evaluate.')
 flags.DEFINE_string(
     'dataset_path', None,
     'If set a dataset of the policy evaluation will be saved '

@@ -1,9 +1,7 @@
 import numpy as np
 
 from tf_agents.metrics import py_metrics
-from tf_agents.typing import types
 from tf_agents.utils import nest_utils
-from tf_agents.utils import numpy_storage
 
 class AverageDistanceToPickup(py_metrics.StreamingMetric):
     def __init__(
@@ -18,7 +16,7 @@ class AverageDistanceToPickup(py_metrics.StreamingMetric):
             name, buffer_size=buffer_size, batch_size=batch_size,
         )
     
-    def _reset(self):
+    def _reset(self, batch_size):
         pass
     
     def _batched_call(self, trajectory):
@@ -46,7 +44,7 @@ class AverageDistanceToGoal(py_metrics.StreamingMetric):
             name, buffer_size=buffer_size, batch_size=batch_size,
         )
     
-    def _reset(self):
+    def _reset(self, batch_size):
         pass
     
     def _batched_call(self, trajectory):
@@ -74,7 +72,7 @@ class AverageObjectDistanceToGoal(py_metrics.StreamingMetric):
             name, buffer_size=buffer_size, batch_size=batch_size,
         )
     
-    def _reset(self):
+    def _reset(self, batch_size):
         pass
     
     def _batched_call(self, trajectory):
@@ -102,7 +100,7 @@ class AverageSuccessMetric(py_metrics.StreamingMetric):
             name, buffer_size=buffer_size, batch_size=batch_size,
         )
     
-    def _reset(self):
+    def _reset(self, batch_size):
         pass
     
     def _batched_call(self, trajectory):

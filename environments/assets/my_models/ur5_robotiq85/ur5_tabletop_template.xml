@@ -8,7 +8,7 @@
 <!-- Inertia parameters provided at link below, not sure of accuracy so not used:
         http://hades.mech.northwestern.edu/images/4/49/UR5-URDF.pdf -->
 <mujoco model="ur5">
-    <compiler angle="radian" meshdir="meshes" balanceinertia="true" />
+    <compiler angle="radian" meshdir="../meshes" texturedir="../meshes" balanceinertia="true" />
     <size nconmax="4000" njmax="5000" />
     <option cone="elliptic" timestep="0.008" />
 
@@ -59,8 +59,8 @@
         <mesh name="robotiq_arg2f_85_outer_finger_vis" file="robotiq_85_gripper/robotiq_arg2f_85_outer_finger_vis.stl" scale="0.001 0.001 0.001" />
         <mesh name="robotiq_arg2f_85_inner_finger_vis" file="robotiq_85_gripper/robotiq_arg2f_85_inner_finger_vis.stl" scale="0.001 0.001 0.001" />
         <mesh name="robotiq_arg2f_85_inner_knuckle_vis" file="robotiq_85_gripper/robotiq_arg2f_85_inner_knuckle_vis.stl" scale="0.001 0.001 0.001" />
-        <texture name="floor_tile" file="meshes/ur5/floor_tile.png" width="3000" height="3000" type="2d"/>
-        <texture name="wood" file="meshes/ur5/wood.png" width="3000" height="3000" type="2d"/>
+        <texture name="floor_tile" file="ur5/floor_tile.png" width="3000" height="3000" type="2d"/>
+        <texture name="wood" file="ur5/wood.png" width="3000" height="3000" type="2d"/>
         <texture name="skybox" type="skybox" builtin="flat" rgb2="1 1 1" width="100" height="100"/>
         <texture name="checker" type="2d" builtin="checker" rgb1="0 0 0" rgb2="1 1 1" width="500" height="500"/>
         <material name="tile" texture="floor_tile" specular="0" shininess="0" reflectance="0" emission="1" />

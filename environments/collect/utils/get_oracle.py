@@ -16,6 +16,8 @@
 """Gets oracles."""
 import ibc.environments.block_pushing.oracles.oriented_push_oracle as oriented_push_oracle_module
 import ibc.environments.block_pushing.oracles.reach_oracle as reach_oracle_module
+import ibc.environments.stack.oracles.stack_oracle as stack_oracle_module
+import ibc.environments.stack.oracles.stack_trajectory_oracle as stack_trajectory_module
 
 
 def get_oracle(env, task):
@@ -25,9 +27,9 @@ def get_oracle(env, task):
   elif task == 'PUSH':
     oracle_policy = oriented_push_oracle_module.OrientedPushOracle(env)
   elif task == 'Stack-v0':
-    raise NotImplementedError
+    oracle_policy = stack_oracle_module.StackOracle(env)
   elif task == 'StackTrajectory-v0':
-    raise NotImplementedError
+    oracle_policy = stack_trajectory_module.StackTrajectoryOracle(env)
   else:
     raise ValueError('oracle not registered.')
   return oracle_policy
