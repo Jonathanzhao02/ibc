@@ -146,13 +146,16 @@ class StackEnv(MujocoEnv):
     # Set starting angles
     self.START_ANGLES = self.model.numeric("START_ANGLES").data
     self.init_qpos[self.mujoco_interface.joint_pos_addrs] = self.START_ANGLES
+
+    # Misc
+    self.done = False
   
   def step(self, a):
     self.do_simulation(a, self.frame_skip)
     self.steps += 1
     ob = self._get_obs()
     reward = self._get_reward()
-    terminated = self.steps >= self.max_episode_steps
+    terminated = self.done or self.steps >= self.max_episode_steps
     return ob, reward, terminated, {}
 
   def reset_model(self):
@@ -199,8 +202,12 @@ class StackEnv(MujocoEnv):
       'mug'
     ])
     self.set_state(qpos, self.init_qvel)
+    self.done = False
 
     return self._get_obs()
+  
+  def indicate_terminated(self):
+    self.done = True
 
   def _get_obs(self):
     self._get_viewer('rgb_array').render(224,224,camera_id=0)

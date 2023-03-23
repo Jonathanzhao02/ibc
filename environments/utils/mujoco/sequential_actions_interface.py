@@ -95,6 +95,7 @@ class Executor:
     self.actions = iter(self.action_list)
     self.gripper = GripperStatus(self.start_gripper_status)
     self.action = next(self.actions, None)
+    self.next_action = next(self.actions, None)
 
   def append(self, action):
     if hasattr(action, '_set_gripper'):
@@ -113,6 +114,7 @@ class Executor:
 
       return u
     else:
-      self.action = next(self.actions, None)
+      self.action = self.next_action
+      self.next_action = next(self.actions, None)
       self.finished = False
       return self.execute()

@@ -33,6 +33,7 @@ class StackOracle(py_policy.PyPolicy):
     env = self._env
     sel = env.selection
     interface = env.mujoco_interface
+    self._prev_action = None
     
     # Controller creation
     self._damping = Damping(env.robot_config, kv=10)
@@ -57,10 +58,10 @@ class StackOracle(py_policy.PyPolicy):
 
     if sel[0] == 'mug':
       mug_scale1 = env.scales['mug_mesh']
-      stack(self._executor, interface, ctrlr, target_name='mug', container_name=sel[1], pickup_dz=MUG_PICKUP_DZ, pickup_dx=MUG_PICKUP_DX * mug_scale1[1], place_dz=place_dz, place_dx=MUG_PICKUP_DX * mug_scale1[1], theta=0, rot_time=0, grip_time=100, grip_force=0.12, terminator=True)
+      stack(self._executor, interface, ctrlr, target_name='mug', container_name=sel[1], pickup_dz=MUG_PICKUP_DZ, pickup_dx=MUG_PICKUP_DX * mug_scale1[1], place_dz=place_dz, place_dx=MUG_PICKUP_DX * mug_scale1[1], theta=0, rot_time=0, grip_time=100, grip_force=0.12, terminator=False)
     else:
       bowl_scale1 = env.scales['bowl_mesh']
-      stack(self._executor, interface, ctrlr, target_name='bowl', container_name=sel[1], pickup_dz=BOWL_PICKUP_DZ / bowl_scale1[1], pickup_dx=BOWL_PICKUP_DX * bowl_scale1[1], place_dz=place_dz, place_dx=BOWL_PICKUP_DX * bowl_scale1[1], theta=0, rot_time=0, grip_time=100, grip_force=0.12, terminator=True)
+      stack(self._executor, interface, ctrlr, target_name='bowl', container_name=sel[1], pickup_dz=BOWL_PICKUP_DZ / bowl_scale1[1], pickup_dx=BOWL_PICKUP_DX * bowl_scale1[1], place_dz=place_dz, place_dx=BOWL_PICKUP_DX * bowl_scale1[1], theta=0, rot_time=0, grip_time=100, grip_force=0.12, terminator=False)
   
     self._executor.reset()
 
@@ -71,6 +72,11 @@ class StackOracle(py_policy.PyPolicy):
     action = self._executor.execute()
 
     if action is not None:
-      action = action.astype(np.float32)
+      self._prev_action = action = action.astype(np.float32)
+    else:
+      action = self._prev_action
+
+    if self._executor.next_action is None and self._executor.finished:
+      self._env.indicate_terminated()
 
     return policy_step.PolicyStep(action=action)

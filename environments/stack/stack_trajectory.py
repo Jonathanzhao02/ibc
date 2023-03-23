@@ -15,9 +15,6 @@ import tensorflow_text as text
 handle = 'https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/3'
 preprocess = 'https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3'
 
-bert_preprocess_model = hub.KerasLayer(preprocess)
-bert_model = hub.KerasLayer(handle)
-
 @gin.configurable
 class StackTrajectoryEnv(StackEnv):
   @gin.configurable
@@ -39,17 +36,19 @@ class StackTrajectoryEnv(StackEnv):
     self.dist_tolerance = dist_tolerance
     self.encode_text = encode_text
 
+    self.bert_preprocess_model = hub.KerasLayer(preprocess)
+    self.bert_model = hub.KerasLayer(handle)
+
     StackEnv.__init__(self, observation_space=observation_space, **kwargs)
   
   def reset_model(self):
     ob = super().reset_model()
 
     if self.encode_text:
-      self.encoded_objective = bert_model(
-        bert_preprocess_model([
-          self.objective,
-        ])
-      )['pooled_output'].numpy().flatten()
+      emb = self.bert_preprocess_model([
+        self.objective,
+      ])
+      self.encoded_objective = self.bert_model(emb)['pooled_output'].numpy().flatten()
       ob['encoded_objective'] = self.encoded_objective
 
     # Controller creation
