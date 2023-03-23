@@ -70,7 +70,8 @@ def random_place(model, qpos, objs):
       tries += 1
 
     if tries >= 100000:
-      raise Exception("Tried to place too many times")
+      qpos = random_place(model, qpos, objs)
+      break
   
   return qpos
 
@@ -110,8 +111,8 @@ class StackEnv(MujocoEnv):
 
     if 'observation_space' not in kwargs:
       kwargs['observation_space'] = Dict({
-        "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.uint8),
-        "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
+        "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
+        # "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
       })
     
     # Create placeholder generated XML
@@ -216,10 +217,11 @@ class StackEnv(MujocoEnv):
     # self._get_viewer('human').render()
     # image = np.zeros((224, 224, 3))
     obj = np.frombuffer(self.objective.encode('ascii'), dtype='B')
+    image = image.astype(np.float32) / 255.
 
     return {
       "image": image,
-      "objective": np.pad(obj, (0, 100 - obj.size)),
+      # "objective": np.pad(obj, (0, 100 - obj.size)),
     }
   
   def _get_reward(self):
