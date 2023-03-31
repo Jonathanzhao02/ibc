@@ -11,6 +11,9 @@ from ibc.environments.utils.mujoco.my_osc import OSC
 
 import numpy as np
 import uuid
+import h5py
+
+from pathlib import Path
 
 MUG_PICKUP_DX = 0.04
 MUG_PICKUP_DZ = 0.065
@@ -31,6 +34,15 @@ class StackOracle(py_policy.PyPolicy):
     self._gripper = None
     self.uuid = uuid.uuid4().__str__()
     self.resets = 0
+
+    if dataset_path is not None:
+      self.out_fname = Path(dataset_path).joinpath(self.uuid + '.hdf5')
+      self._f = h5py.File(self.out_fname.__str__(), 'w')
+
+      if self._f:
+        pass
+      else:
+        raise Exception('Failed to open h5py file')
   
   def reset(self):
     env = self._env
