@@ -163,7 +163,7 @@ def evaluate(num_episodes,
         raise ValueError('Unknown policy for given task: %s: ' % static_policy)
     elif task != 'PARTICLE':
       # Get an oracle.
-      policy = get_oracle_module.get_oracle(env, flags.FLAGS.task)
+      policy = get_oracle_module.get_oracle(env, flags.FLAGS.task, dataset_path)
     else:
       raise ValueError('Unknown policy: %s: ' % static_policy)
 

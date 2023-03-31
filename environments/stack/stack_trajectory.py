@@ -21,7 +21,7 @@ class StackTrajectoryEnv(StackEnv):
   def __init__(self, dist_tolerance=0.01, encode_text=True, **kwargs):
     if encode_text:
         observation_space = Dict({
-          "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
+          "rgb": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
           # "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
           "encoded_objective": Box(low=-np.inf, high=np.inf, shape=(768,), dtype=np.float32),
         })
@@ -29,7 +29,7 @@ class StackTrajectoryEnv(StackEnv):
         self.encoded_objective = None
     else:
       observation_space = Dict({
-        "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
+        "rgb": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
         # "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
       })
 

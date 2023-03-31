@@ -12,6 +12,7 @@ import mujoco as mj
 
 import numpy as np
 import random
+import uuid
 import os
 from pathlib import Path
 import gin
@@ -100,18 +101,18 @@ class StackEnv(MujocoEnv):
 
   @gin.configurable
   def __init__(self, collisions=True, max_episode_steps=800, goal_distance=0.08, **kwargs):
+    self.uuid = uuid.uuid4().__str__()
     if not collisions:
       self.xml_template_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_template_nocol.xml'
-      self.xml_path = f'ibc/environments/assets/my_models/ur5_robotiq85/generated/{id(self)}.xml'
-      self.xml_name = f'{id(self)}.xml'
     else:
       self.xml_template_path = 'ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_template.xml'
-      self.xml_path = f'ibc/environments/assets/my_models/ur5_robotiq85/generated/{id(self)}.xml'
-      self.xml_name = f'{id(self)}.xml'
+
+    self.xml_path = f'ibc/environments/assets/my_models/ur5_robotiq85/generated/{self.uuid}.xml'
+    self.xml_name = f'{self.uuid}.xml'
 
     if 'observation_space' not in kwargs:
       kwargs['observation_space'] = Dict({
-        "image": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
+        "rgb": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
         # "objective": Box(low=0, high=255, shape=(100,), dtype='B'),
       })
     
@@ -220,7 +221,7 @@ class StackEnv(MujocoEnv):
     image = image.astype(np.float32) / 255.
 
     return {
-      "image": image,
+      "rgb": image,
       # "objective": np.pad(obj, (0, 100 - obj.size)),
     }
   

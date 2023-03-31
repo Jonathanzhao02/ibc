@@ -20,16 +20,16 @@ import ibc.environments.stack.oracles.stack_oracle as stack_oracle_module
 import ibc.environments.stack.oracles.stack_trajectory_oracle as stack_trajectory_module
 
 
-def get_oracle(env, task):
+def get_oracle(env, task, dataset_path=None):
   """Gets an oracle for a given task."""
   if task == 'REACH':
     oracle_policy = reach_oracle_module.ReachOracle(env)
   elif task == 'PUSH':
     oracle_policy = oriented_push_oracle_module.OrientedPushOracle(env)
   elif task == 'Stack-v0':
-    oracle_policy = stack_oracle_module.StackOracle(env)
+    oracle_policy = stack_oracle_module.StackOracle(env, dataset_path)
   elif task == 'StackTrajectory-v0':
-    oracle_policy = stack_trajectory_module.StackTrajectoryOracle(env)
+    oracle_policy = stack_trajectory_module.StackTrajectoryOracle(env, dataset_path)
   else:
     raise ValueError('oracle not registered.')
   return oracle_policy

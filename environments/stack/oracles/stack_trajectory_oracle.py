@@ -8,6 +8,10 @@ from ibc.environments.utils.mujoco.sequential_actions_interface import Executor
 from ibc.environments.utils.mujoco.tasks import stack
 
 import numpy as np
+import uuid
+import h5py
+
+from pathlib import Path
 
 MUG_PICKUP_DX = 0.04
 MUG_PICKUP_DZ = 0.065
@@ -22,9 +26,20 @@ DIST_MAX = 0.75
 AVG_CHANGE = 0.15
 
 class StackTrajectoryOracle(py_policy.PyPolicy):
-  def __init__(self, env):
+  def __init__(self, env, dataset_path=None):
     super(StackTrajectoryOracle, self).__init__(env.time_step_spec(), env.action_spec())
     self._env = env
+    self.uuid = uuid.uuid4().__str__()
+    self.resets = 0
+
+    if dataset_path is not None:
+      self.out_fname = Path(dataset_path).joinpath(self.uuid + '.hdf5')
+      self._f = h5py.File(self.out_fname.__str__(), 'w')
+
+      if self._f:
+        pass
+      else:
+        raise Exception('Failed to open h5py file')
   
   def reset(self):
     env = self._env
@@ -49,6 +64,12 @@ class StackTrajectoryOracle(py_policy.PyPolicy):
       stack(self._executor, interface, ctrlr, target_name='bowl', container_name=sel[1], pickup_dz=BOWL_PICKUP_DZ / bowl_scale1[1], pickup_dx=BOWL_PICKUP_DX * bowl_scale1[1], place_dz=place_dz, place_dx=BOWL_PICKUP_DX * bowl_scale1[1], theta=0, rot_time=0, grip_time=100, grip_force=0.12, terminator=False)
   
     self._executor.reset()
+
+    obj = env.objective
+    colors = env.colors
+    scales = env.scales
+
+    self.resets += 1
 
   def _action(self, time_step: ts.TimeStep, policy_state: types.NestedArray):
     if time_step.is_first():
