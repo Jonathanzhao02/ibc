@@ -6,4 +6,5 @@ python3 ibc/data/policy_eval.py -- \
  --policy=oracle_stack_lite_trajectory \
  --task=StackLiteTrajectory-v0 \
  --dataset_path=ibc/data/stack_trajectory_lite/stack_trajectory_lite.tfrecord \
+ --replicas=1 \
  --use_image_obs=True
