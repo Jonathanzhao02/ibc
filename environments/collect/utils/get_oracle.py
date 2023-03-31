@@ -18,6 +18,8 @@ import ibc.environments.block_pushing.oracles.oriented_push_oracle as oriented_p
 import ibc.environments.block_pushing.oracles.reach_oracle as reach_oracle_module
 import ibc.environments.stack.oracles.stack_oracle as stack_oracle_module
 import ibc.environments.stack.oracles.stack_trajectory_oracle as stack_trajectory_module
+import ibc.environments.stack_lite.oracles.stack_lite_oracle as stack_lite_module
+import ibc.environments.stack_lite.oracles.stack_lite_trajectory_oracle as stack_lite_trajectory_module
 
 
 def get_oracle(env, task, dataset_path=None):
@@ -30,6 +32,10 @@ def get_oracle(env, task, dataset_path=None):
     oracle_policy = stack_oracle_module.StackOracle(env, dataset_path)
   elif task == 'StackTrajectory-v0':
     oracle_policy = stack_trajectory_module.StackTrajectoryOracle(env, dataset_path)
+  elif task == 'StackLite-v0':
+    oracle_policy = stack_lite_module.StackLiteOracle(env)
+  elif task == 'StackLiteTrajectory-v0':
+    oracle_policy = stack_lite_trajectory_module.StackLiteTrajectoryOracle(env)
   else:
     raise ValueError('oracle not registered.')
   return oracle_policy

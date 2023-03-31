@@ -32,6 +32,8 @@ from ibc.environments.particle import particle  # pylint: disable=unused-import
 from ibc.environments.particle import particle_oracles
 from ibc.environments.stack import stack  # pylint: disable=unused-import
 from ibc.environments.stack import stack_trajectory  # pylint: disable=unused-import
+from ibc.environments.stack_lite import stack_lite  # pylint: disable=unused-import
+from ibc.environments.stack_lite import stack_lite_trajectory  # pylint: disable=unused-import
 from ibc.ibc import tasks
 from tf_agents.drivers import py_driver
 from tf_agents.environments import suite_gym
@@ -75,7 +77,7 @@ flags.DEFINE_string('checkpoint_path', None,
 flags.DEFINE_enum('policy', None, [
     'random', 'oracle_reach', 'oracle_push', 'oracle_reach_normalized',
     'oracle_push_normalized', 'particle_green_then_blue'
-] + ['oracle_stack', 'oracle_stack_trajectory'], 'Static policies to evaluate.')
+] + ['oracle_stack', 'oracle_stack_trajectory', 'oracle_stack_lite_trajectory'], 'Static policies to evaluate.')
 flags.DEFINE_string(
     'dataset_path', None,
     'If set a dataset of the policy evaluation will be saved '
