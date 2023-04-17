@@ -12,7 +12,6 @@ import mujoco as mj
 
 import numpy as np
 import random
-import uuid
 import os
 from pathlib import Path
 import gin
@@ -100,7 +99,7 @@ class StackLiteEnv(MujocoEnv):
     return metrics, success_metric
 
   @gin.configurable
-  def __init__(self, xml_path='ibc/environments/assets/my_models/ur5_robotiq85/generated/139623653837744.xml', max_episode_steps=800, goal_distance=0.08, **kwargs):
+  def __init__(self, xml_path='ibc/environments/assets/my_models/ur5_robotiq85/generated/4809a791-632f-42c7-ac11-ee7edceacfcc.xml', max_episode_steps=800, goal_distance=0.08, random_place=True, **kwargs):
     if 'observation_space' not in kwargs:
       kwargs['observation_space'] = Dict({
         "rgb": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
@@ -109,6 +108,7 @@ class StackLiteEnv(MujocoEnv):
     self.xml_path = xml_path
     self.goal_distance = goal_distance
     self.max_episode_steps = max_episode_steps
+    self.random_place = random_place
 
     MujocoEnv.__init__(
       self,
@@ -144,6 +144,8 @@ class StackLiteEnv(MujocoEnv):
     self.steps = 0
 
     self.selection = ['mug', 'plate']
+    self.colors = {'bowl': ['cyan', '0.000 0.948 0.966 1'], 'bowl_2': ['red', '0.929 0.000 0.000 1'], 'bowl_3': ['yellow', '1.000 0.906 0.001 1'], 'plate': ['cyan', '0.037 1.000 1.000 1'], 'plate_2': ['yellow', '1.000 1.000 0.000 1'], 'plate_3': ['white', '0.957 0.965 0.970 1'], 'mug': ['red', '0.931 0.084 0.039 1'], 'mug_2': ['black', '0.074 0.000 0.031 1'], 'mug_3': ['blue', '0.084 0.065 0.908 1']}
+    self.scales = {'bowl_mesh': ['large', 1.2466501768695342], 'bowl_2_mesh': ['medium', 1.0743564648843356], 'bowl_3_mesh': ['small', 0.8011659323748979], 'plate_mesh': ['medium', 0.9127324687494754], 'plate_2_mesh': ['small', 0.795823622955547], 'plate_3_mesh': ['small', 0.8057945152094104], 'mug_mesh': ['small', 0.76807460708674], 'mug_2_mesh': ['large', 1.151023174736166], 'mug_3_mesh': ['medium', 1.011275386058562]}
 
     # Reset metrics
     self.min_dist_to_pickup = np.inf
@@ -162,11 +164,28 @@ class StackLiteEnv(MujocoEnv):
     self.mujoco_interface.connect(['joint0', 'joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'finger_joint'])
 
     # Randomize object positions
-    qpos = random_place(self.model, self.init_qpos, [
-      'bowl',
-      'plate',
-      'mug'
-    ])
+    if self.random_place:
+      qpos = random_place(self.model, self.init_qpos, [
+        'bowl',
+        'plate',
+        'mug'
+      ])
+    else:
+      qpos = np.array([0, 0.4, -2.3, 0.41, 1.57, 0,
+        0,  0,  0,  0,  0,  0,
+        0, 10,  0.05, 1,  0,  0,
+        0,  0, 11,  0.05, 1,  0,
+        0,  0,  0.01323144, 0.40757647, 0.05, 1,
+        0,  0,  0,  1, 10,  0.05,
+        1,  0,  0,  0, -1, 10,
+        0.05, 1,  0,  0,  0, -0.18131834,
+        0.29774985, 0.05, 1,  0,  0,  0,
+        -1, 11,  0.05, 1,  0,  0,
+        0,  1, 12,  0.05, 1,  0,
+        0,  0,  0.21672751, 0.39437535, 0.05, 1,
+        0,  0,  0, -1,  9,  0.05,
+        1,  0,  0,  0,  1,  9,
+        0.05, 1,  0,  0,  0, ])
     self.set_state(qpos, self.init_qvel)
     self.done = False
 

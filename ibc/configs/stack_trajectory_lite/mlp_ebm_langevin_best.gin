@@ -13,19 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-train_eval.root_dir = '/tmp/ibc_logs/mlp_ebm_langevin'
+train_eval.root_dir = '/tmp/ibc_logs/mlp_ebm_langevin_stl'
 train_eval.loss_type = 'ebm' # specifies we are training ebm.
 train_eval.network = 'PixelEBM'
 train_eval.batch_size = 512
-ImplicitBCAgent.num_counter_examples = 8
-train_eval.num_iterations = 1500
-train_eval.replay_capacity = 100
+ImplicitBCAgent.num_counter_examples = 16
+train_eval.num_iterations = 40000
+train_eval.replay_capacity = 5000
 train_eval.eval_interval = 500
 train_eval.eval_episodes = 20
 train_eval.learning_rate = 1e-3
 train_eval.goal_tolerance = 0.02
 train_eval.seed = 0
-train_eval.sequence_length = 2
+train_eval.sequence_length = 8
 train_eval.dataset_eval_fraction = 0.0
 get_normalizers.nested_obs = True
 
@@ -41,12 +41,12 @@ IbcPolicy.optimize_again = False
 # Configs for cloning net.
 PixelEBM.encoder_network = 'ConvMaxpoolEncoder'
 PixelEBM.value_network = 'DenseResnetValue'
-PixelEBM.target_height = 180
-PixelEBM.target_width = 240
+PixelEBM.target_height = 224
+PixelEBM.target_width = 224
 
 # Value config.
 DenseResnetValue.width = 1024
-DenseResnetValue.num_blocks = 1
+DenseResnetValue.num_blocks = 4
 
 # Tell training and test we are doing late fusion.
 ImplicitBCAgent.late_fusion = True

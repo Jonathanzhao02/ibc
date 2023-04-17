@@ -8,4 +8,5 @@ python3 ibc/ibc/train_eval.py -- \
   --task=StackLiteTrajectory-v0 \
   --tag=langevin_best \
   --add_time=True \
-  --gin_bindings="train_eval.dataset_path='ibc/data/stack_trajectory_lite/$stack_trajectory_lite*.tfrecord'" \
+  --gin_bindings="train_eval.dataset_path='ibc/data/stack_trajectory_lite_staticpos/$stack_trajectory_lite_staticpos*.tfrecord'" \
+  --gin_bindings="StackLiteTrajectoryEnv.random_place=False" \

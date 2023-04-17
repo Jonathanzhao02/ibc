@@ -50,8 +50,6 @@ class StackLiteTrajectoryOracle(py_policy.PyPolicy):
   
     self._executor.reset()
 
-    self.resets += 1
-
   def _action(self, time_step: ts.TimeStep, policy_state: types.NestedArray):
     if time_step.is_first():
       self.reset()
