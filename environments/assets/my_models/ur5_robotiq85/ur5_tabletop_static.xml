@@ -1,5 +1,5 @@
 <mujoco model="ur5">
-    <compiler angle="radian" meshdir="../meshes" texturedir="../meshes" balanceinertia="true" />
+    <compiler angle="radian" meshdir="meshes" texturedir="meshes" balanceinertia="true" />
     <size nconmax="4000" njmax="5000" />
     <option cone="elliptic" timestep="0.008" />
     <default>
