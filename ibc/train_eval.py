@@ -402,4 +402,6 @@ def main(_):
 
 
 if __name__ == '__main__':
+  import matplotlib
+  matplotlib.use('agg')
   multiprocessing.handle_main(functools.partial(app.run, main))
