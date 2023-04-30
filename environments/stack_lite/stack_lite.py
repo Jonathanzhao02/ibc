@@ -12,6 +12,7 @@ import ibc.environments.stack.stack_viz as stack_viz
 import mujoco as mj
 
 import matplotlib.pyplot as plt
+import numpy as np
 import random
 import os
 from pathlib import Path
