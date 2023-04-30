@@ -7,4 +7,5 @@ python3 ibc/data/policy_eval.py -- \
  --task=StackLiteTrajectory-v0 \
  --dataset_path=/data2/localuser/jjzhao/ibc/data/stack_lite_trajectory/stack_lite_trajectory.tfrecord \
  --replicas=1 \
+ --viz_img=True \
  --use_image_obs=True

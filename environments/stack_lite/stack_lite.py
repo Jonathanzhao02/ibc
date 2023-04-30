@@ -146,6 +146,7 @@ class StackLiteEnv(MujocoEnv):
     return ob, reward, terminated, {}
 
   def reset_model(self):
+    self.pos_log = []
     self.reset_counter += 1
     self.steps = 0
 
