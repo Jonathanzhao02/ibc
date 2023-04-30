@@ -178,9 +178,9 @@ def evaluate(num_episodes,
 
   observers = metrics[:]
 
-  if viz_img and ('Particle' in env_name):
-    visualization_dir = '/tmp/particle_oracle'
-    shutil.rmtree(visualization_dir, ignore_errors=True)
+  if viz_img and ('Particle' in env_name or 'Stack' in env_name):
+    visualization_dir = output_path
+    # shutil.rmtree(visualization_dir, ignore_errors=True)
     env.set_img_save_dir(visualization_dir)
     observers += [env.save_image]
 
@@ -212,14 +212,18 @@ def main(_):
 
   if flags.FLAGS.replicas:
     jobs = []
-    if not flags.FLAGS.dataset_path:
-      raise ValueError(
-          'A dataset_path must be provided when replicas are specified.')
-    dataset_split_path = os.path.splitext(flags.FLAGS.dataset_path)
+
+    if flags.FLAGS.dataset_path:
+      dataset_split_path = os.path.splitext(flags.FLAGS.dataset_path)
+    
     context = multiprocessing.get_context()
 
     for i in range(flags.FLAGS.replicas):
-      dataset_path = dataset_split_path[0] + '_%d' % i + dataset_split_path[1]
+      if flags.FLAGS.dataset_path:
+        dataset_path = dataset_split_path[0] + '_%d' % i + dataset_split_path[1]
+      else:
+        dataset_path = None
+      
       kwargs = dict(
           num_episodes=flags.FLAGS.num_episodes,
           task=flags.FLAGS.task,
@@ -230,7 +234,10 @@ def main(_):
           checkpoint_path=flags.FLAGS.checkpoint_path,
           static_policy=flags.FLAGS.policy,
           dataset_path=dataset_path,
-          history_length=flags.FLAGS.history_length
+          history_length=flags.FLAGS.history_length,
+          video=flags.FLAGS.video,
+          viz_img=flags.FLAGS.viz_img,
+          output_path=flags.FLAGS.output_path,
       )
       job = context.Process(target=evaluate, kwargs=kwargs)
       job.start()
@@ -258,4 +265,6 @@ def main(_):
 
 
 if __name__ == '__main__':
+  import matplotlib
+  matplotlib.use('agg')
   multiprocessing.handle_main(functools.partial(app.run, main))

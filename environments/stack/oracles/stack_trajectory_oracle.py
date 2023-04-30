@@ -31,15 +31,6 @@ class StackTrajectoryOracle(py_policy.PyPolicy):
     self._env = env
     self.uuid = uuid.uuid4().__str__()
     self.resets = 0
-
-    if dataset_path is not None:
-      self.out_fname = Path(dataset_path).joinpath(self.uuid + '.hdf5')
-      self._f = h5py.File(self.out_fname.__str__(), 'w')
-
-      if self._f:
-        pass
-      else:
-        raise Exception('Failed to open h5py file')
   
   def reset(self):
     env = self._env

@@ -11,7 +11,7 @@ from ibc.environments.utils.mujoco.my_osc import OSC
 @gin.configurable
 class StackLiteTrajectoryEnv(StackLiteEnv):
   @gin.configurable
-  def __init__(self, xml_path='ibc/environments/assets/my_models/ur5_robotiq85/generated/4809a791-632f-42c7-ac11-ee7edceacfcc.xml', dist_tolerance=0.01, random_place=True, **kwargs):
+  def __init__(self, xml_path='ibc/environments/assets/my_models/ur5_robotiq85/ur5_tabletop_static.xml', dist_tolerance=0.01, random_place=True, **kwargs):
     observation_space = Dict({
       "rgb": Box(low=0, high=255, shape=(224,224,3), dtype=np.float32),
     })

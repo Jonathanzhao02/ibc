@@ -65,7 +65,7 @@ def get_eval_actor(agent,
   # Adds a log when an episode is done, allows seeing eval time in the logs.
   observers += [log_episode_complete]
 
-  if viz_img and 'Particle' in env_name:
+  if viz_img and ('Particle' in env_name or 'Stack' in env_name):
     eval_env.set_img_save_dir(summary_dir)
     observers += [eval_env.save_image]
 
