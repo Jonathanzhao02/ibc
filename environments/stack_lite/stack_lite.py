@@ -7,10 +7,11 @@ from ibc.environments.utils.xml.parse_xml import parse_xml
 from ibc.environments.utils.xml.tag_replacers import ColorTagReplacer, ScaleTagReplacer
 from ibc.environments.utils.mujoco.mujoco_interface import Mujoco
 from ibc.environments.utils.mujoco.my_mujoco_config import MujocoConfig
+import ibc.environments.stack.stack_viz as stack_viz
 
 import mujoco as mj
 
-import numpy as np
+import matplotlib.pyplot as plt
 import random
 import os
 from pathlib import Path
@@ -131,6 +132,9 @@ class StackLiteEnv(MujocoEnv):
 
     # Misc
     self.done = False
+    self.reset_counter = 0
+    self.img_save_dir = None
+    self.pos_log = []
   
   def step(self, a):
     self.do_simulation(a, self.frame_skip)
@@ -141,6 +145,7 @@ class StackLiteEnv(MujocoEnv):
     return ob, reward, terminated, {}
 
   def reset_model(self):
+    self.reset_counter += 1
     self.steps = 0
 
     self.selection = ['mug', 'plate']
@@ -202,6 +207,13 @@ class StackLiteEnv(MujocoEnv):
     # image = np.zeros((224, 224, 3))
     image = image.astype(np.float32) / 255.
 
+    pos_obs = { 'ee': self.mujoco_interface.get_xyz('EE') }
+
+    for sel in ['mug', 'bowl', 'plate']:
+      pos_obs[sel] = self.mujoco_interface.get_xyz(sel)
+
+    self.pos_log.append(pos_obs)
+
     return {
       "rgb": image,
     }
@@ -235,5 +247,18 @@ class StackLiteEnv(MujocoEnv):
     v = self.viewer
     v.cam.type = mj.mjtCamera.mjCAMERA_FIXED
     v.cam.fixedcamid = 0
+  
+  def set_img_save_dir(self, summary_dir):
+    self.img_save_dir = os.path.join(summary_dir, 'imgs')
+    os.makedirs(self.img_save_dir, exist_ok=True)
+
+  def save_image(self, traj):
+    if traj.is_last():
+      assert self.img_save_dir is not None  # pytype: disable=attribute-error
+      fig, _ = stack_viz.visualize(self.pos_log)
+      filename = os.path.join(self.img_save_dir,  # pytype: disable=attribute-error
+                              str(self.reset_counter).zfill(6)+'_2d.png')
+      fig.savefig(filename)
+      plt.close(fig)
 
 registration.register(id='StackLite-v0', entry_point=StackLiteEnv)
