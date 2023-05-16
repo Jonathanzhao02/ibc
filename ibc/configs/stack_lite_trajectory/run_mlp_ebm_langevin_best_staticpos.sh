@@ -10,3 +10,4 @@ python3 ibc/ibc/train_eval.py -- \
   --add_time=True \
   --gin_bindings="train_eval.dataset_path='/data2/localuser/jjzhao/ibc/data/stack_lite_trajectory_staticpos/$stack_lite_trajectory_staticpos*.tfrecord'" \
   --gin_bindings="StackLiteTrajectoryEnv.random_place=False" \
+  --viz_img=True

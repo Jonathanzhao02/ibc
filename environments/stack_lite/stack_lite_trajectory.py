@@ -7,6 +7,10 @@ import gin
 
 from abr_control.controllers import Damping # type: ignore
 from ibc.environments.utils.mujoco.my_osc import OSC
+import ibc.environments.stack.stack_viz as stack_viz
+
+import os
+import matplotlib.pyplot as plt
 
 @gin.configurable
 class StackLiteTrajectoryEnv(StackLiteEnv):
@@ -17,11 +21,13 @@ class StackLiteTrajectoryEnv(StackLiteEnv):
     })
 
     self.dist_tolerance = dist_tolerance
+    self.goal_log = []
 
     StackLiteEnv.__init__(self, xml_path=xml_path, observation_space=observation_space, random_place=random_place, **kwargs)
   
   def reset_model(self):
     ob = super().reset_model()
+    self.goal_log = []
 
     # Controller creation
     self.damping = Damping(self.robot_config, kv=10)
@@ -46,8 +52,18 @@ class StackLiteTrajectoryEnv(StackLiteEnv):
       target=a[:-1],
     )
     u[-1] = a[-1]
+    self.goal_log.append(a[:3])
     ob, reward, terminated, _ = StackLiteEnv.step(self, u)
 
     return ob, reward, terminated, {}
+
+  def save_image(self, traj):
+    if traj.is_last():
+      assert self.img_save_dir is not None  # pytype: disable=attribute-error
+      fig, _ = stack_viz.visualize(self.pos_log, self.goal_log)
+      filename = os.path.join(self.img_save_dir,  # pytype: disable=attribute-error
+                              str(self.reset_counter).zfill(6)+'_2d.png')
+      fig.savefig(filename)
+      plt.close(fig)
 
 registration.register(id='StackLiteTrajectory-v0', entry_point=StackLiteTrajectoryEnv)
